@@ -1,3 +1,5 @@
+// Package seq almost implements `RFC7464`
+// to realize `application/json-seq` streaming.
 package seq
 
 import (
@@ -5,7 +7,7 @@ import (
 	"io"
 )
 
-//RFC7464 provide an encoder compatible with the aforemetnionned spec.
+//RFC7464 provides an encoder compatible with the aforementionned spec.
 func RFC7464(out io.Writer) *Encoder {
 	return &Encoder{
 		EncoderWriter: EncoderWriter{
@@ -17,19 +19,18 @@ func RFC7464(out io.Writer) *Encoder {
 	}
 }
 
-//BytesEncoder encodes any kind of data to []byte
+//BytesEncoder encodes any kind of data to []byte.
 type BytesEncoder interface {
 	Encode(interface{}) error
 }
 
-//EncoderWriter is something that can Encoder and Writes on the same underlying storage.
+//EncoderWriter is something that can Encode and Write on the same underlying storage.
 type EncoderWriter struct {
 	BytesEncoder
 	io.Writer
 }
 
-//Encoder implements https://tools.ietf.org/html/rfc7464.
-// It encodes data and wraps them using seprator values.
+// Encoder of anykind of data wrapped with prefix and/or suffis spearators.
 //TODO: It does not escape separators from the encoded data.
 type Encoder struct {
 	EncoderWriter
@@ -38,7 +39,7 @@ type Encoder struct {
 	Dest            io.Writer
 }
 
-//Encode anything using rfc7464
+//Encode anything using wand wraps it with separators.
 func (s *Encoder) Encode(v interface{}) (err error) {
 	writers := []writer{
 		s.writeRaw(s.PrefixSeparator),
