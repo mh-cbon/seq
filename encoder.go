@@ -7,6 +7,12 @@ import (
 	"io"
 )
 
+// RFC7464 separators.
+var (
+	RS = []byte{30}
+	LF = []byte{10}
+)
+
 //RFC7464 provides an encoder compatible with the aforementionned spec.
 func RFC7464(out io.Writer) *Encoder {
 	return &Encoder{
@@ -14,8 +20,8 @@ func RFC7464(out io.Writer) *Encoder {
 			BytesEncoder: json.NewEncoder(out),
 			Writer:       out,
 		},
-		PrefixSeparator: []byte{30},
-		// SuffixSeparator: []byte{10}, // dont set it, golang json encoder already does it.
+		PrefixSeparator: RS,
+		// SuffixSeparator: LF, // dont set it, golang json encoder already does it.
 	}
 }
 
@@ -36,7 +42,6 @@ type Encoder struct {
 	EncoderWriter
 	PrefixSeparator []byte
 	SuffixSeparator []byte
-	Dest            io.Writer
 }
 
 //Encode anything using wand wraps it with separators.
